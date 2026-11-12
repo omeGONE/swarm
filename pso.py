@@ -7,7 +7,6 @@ from topologies import TOPOLOGIES, build_neighbors
 
 class PSO:
 
-
     def __init__(
         self,
         n_particles: int = 30,
@@ -55,17 +54,12 @@ class PSO:
         self._d0: float = 1.0
 
     def _social_best(self, P: np.ndarray, P_val: np.ndarray) -> np.ndarray:
-        """
-        Лучшая персональная позиция в окружении каждой частицы (9.6)–(9.7).
-        Для 'star' окружение = весь рой, т.е. l_i = gbest.
-        """
         L = np.empty_like(P)
         for i, nb in enumerate(self.neighbors_):
             L[i] = P[nb[np.argmin(P_val[nb])]]
         return L
 
     def _swarm_radius(self, X: np.ndarray) -> float:
-        """Нормализованный радиус роя (9.9): max||x_i − gbest|| / d0."""
         r_max = np.max(np.linalg.norm(X - self.best_position_, axis=1))
         return float(r_max / self._d0)
 
@@ -74,20 +68,7 @@ class PSO:
         func,
         bounds: np.ndarray,
         x0: np.ndarray | None = None,
-    ) -> "PSO":
-        """
-        Минимизация целевой функции.
-
-        Parameters
-        ----------
-        func : callable
-            Векторизованная фитнесс-функция: принимает (n, dim), возвращает (n,).
-        bounds : array-like, shape (dim, 2)
-            Границы поиска [x_min, x_max] по каждой координате.
-        x0 : np.ndarray, shape (n_particles, dim) | None
-            Начальные позиции (по умолчанию — равномерно по (9.8)).
-            Начальные скорости нулевые в обоих случаях.
-        """
+    ):
         bounds = np.asarray(bounds, dtype=float)
         if bounds.ndim != 2 or bounds.shape[1] != 2:
             raise ValueError("bounds must have shape (dim, 2)")
@@ -150,7 +131,7 @@ class PSO:
                 self.stop_reason_ = "tol"
                 break
             if (
-                self.stall_iter is not None
+                 self.stall_iter is not None
                 and it >= self.stall_iter
                 and history[-self.stall_iter - 1] == self.best_value_
             ):

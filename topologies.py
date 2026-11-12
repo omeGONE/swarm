@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 
-TOPOLOGIES = ("star", "ring", "wheel", "clusters", "von_neumann")
+TOPOLOGIES = ("star", "ring", "wheel", "clusters")
 
 
 def build_neighbors(
@@ -55,14 +55,14 @@ def build_neighbors(
             link(int(g1[0]), int(g2[0]))
             link(int(g1[-1]), int(g2[-1]))
 
-    else:  # von_neumann
-        cols = int(np.ceil(np.sqrt(n_particles)))
-        rows = int(np.ceil(n_particles / cols))
-        for i in range(n_particles):
-            r, c = divmod(i, cols)
-            for rr, cc in ((r - 1, c), (r + 1, c), (r, c - 1), (r, c + 1)):
-                j = (rr % rows) * cols + (cc % cols)
-                if j < n_particles:
-                    link(i, j)
+    # else:  # von_neumann
+    #     cols = int(np.ceil(np.sqrt(n_particles)))
+    #     rows = int(np.ceil(n_particles / cols))
+    #     for i in range(n_particles):
+    #         r, c = divmod(i, cols)
+    #         for rr, cc in ((r - 1, c), (r + 1, c), (r, c - 1), (r, c + 1)):
+    #             j = (rr % rows) * cols + (cc % cols)
+    #             if j < n_particles:
+    #                 link(i, j)
 
     return [np.array(sorted(s | {i}), dtype=int) for i, s in enumerate(adj)]
